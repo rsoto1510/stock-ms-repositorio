@@ -10,5 +10,5 @@ public class StockDto {
     private Integer productid;
     private Integer warehouseid;
     private Integer quantity;
-    private Integer total;
+
 }

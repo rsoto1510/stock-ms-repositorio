@@ -1,5 +1,6 @@
 package com.everis.stockms.service;
 
+import com.everis.stockms.dto.FindByProductIdDto;
 import com.everis.stockms.entity.Stock;
 import com.everis.stockms.exception.BusinessException;
 import com.everis.stockms.exception.ResourceNotFoundException;
@@ -16,26 +17,26 @@ public class StockServiceImpl implements  StockService {
     private StockRepository stockRepository;
 
     @Override
-    public Stock totalStock(Integer total) {
-        return null;
+    public FindByProductIdDto totalStock(Integer productid) throws ResourceNotFoundException {
+        Integer suma = stockRepository.totalStock(productid);
+        if (suma == null){
+            throw new ResourceNotFoundException();
+        }
+        FindByProductIdDto result = new FindByProductIdDto();
+        result.setProductid(productid);
+        result.setTotal(suma);
+        return result;
+
     }
 
     @Override
-    public List<Stock> listAll() {
-        return (List<Stock>) stockRepository.findAll();
+    public List<Stock> save(List<Stock> stockList) throws BusinessException {
+        for (Stock stock : stockList){
+            if (stock.getQuantity().equals(0)){
+                throw new BusinessException("Quantity of product cannot be 0");
+            }
+        }
+        return stockRepository.saveAll(stockList);
     }
 
-    /*
-        @Override
-        public Stock customStockId(Integer id, Integer total) throws ResourceNotFoundException {
-            return stockRepository.findCustomProductId(id,total);
-        }
-    */
-    @Override
-    public Stock save(Stock stock) throws BusinessException {
-        if(stock.getQuantity() == 0){
-            throw new BusinessException("Quantity of product cannot be 0");
-        }
-        return stockRepository.save(stock);
-    }
 }
